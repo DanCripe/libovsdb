@@ -80,7 +80,6 @@ The name and email address used in the sign off are taken from your `user.name` 
 
     # Run all the tests
     fig up -d
-    sudo chmod a+rw db.sock
     make test-all
     fig stop
 

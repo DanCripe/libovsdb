@@ -89,39 +89,6 @@ func TestDial(t *testing.T) {
 	}
 }
 
-func TestUnixDial(t *testing.T) {
-	if testing.Short() {
-		t.Skip()
-	}
-
-	timeoutChan := make(chan bool)
-	connected := make(chan bool)
-	go func() {
-		time.Sleep(10 * time.Second)
-		timeoutChan <- true
-	}()
-
-	go func() {
-		ovs, err := Dial("unix", "db.sock")
-		if err != nil {
-			fmt.Println("Error:", err)
-			connected <- false
-		} else {
-			connected <- true
-			ovs.Disconnect()
-		}
-	}()
-
-	select {
-	case <-timeoutChan:
-		t.Error("Connection Timed Out")
-	case b := <-connected:
-		if !b {
-			t.Error("Couldnt connect to OVSDB Server")
-		}
-	}
-}
-
 func TestListDbs(t *testing.T) {
 	if testing.Short() {
 		t.Skip()
