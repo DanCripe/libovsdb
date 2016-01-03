@@ -52,7 +52,9 @@ func (schema DatabaseSchema) validateOperations(operations ...Operation) bool {
 			}
 			for _, column := range op.Columns {
 				if _, ok := table.Columns[column]; !ok {
-					return false
+					if column != "_uuid" && column != "_version" {
+						return false
+					}
 				}
 			}
 		} else {
