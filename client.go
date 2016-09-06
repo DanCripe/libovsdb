@@ -7,8 +7,8 @@ import (
 	"log"
 	"net"
 
-	"github.com/socketplane/libovsdb/Godeps/_workspace/src/github.com/cenkalti/rpc2"
-	"github.com/socketplane/libovsdb/Godeps/_workspace/src/github.com/cenkalti/rpc2/jsonrpc"
+	"github.com/cenk/rpc2"
+	"github.com/cenk/rpc2/jsonrpc"
 )
 
 type OvsdbClient struct {
@@ -93,6 +93,8 @@ type NotificationHandler interface {
 
 	// RFC 7047 section 4.1.11 Echo Notification
 	Echo([]interface{})
+
+	Disconnected(*OvsdbClient)
 }
 
 // RFC 7047 : Section 4.1.6 : Echo
@@ -179,9 +181,9 @@ func (ovs OvsdbClient) Transact(database string, operation ...Operation) ([]Oper
 	args := NewTransactArgs(database, operation...)
 	err := ovs.rpcClient.Call("transact", args, &reply)
 	if err != nil {
-		log.Fatal("transact failure", err)
+		return nil, err
 	}
-	return reply, err
+	return reply, nil
 }
 
 // Convenience method to monitor every table/column
@@ -236,7 +238,14 @@ func getTableUpdatesFromRawUnmarshal(raw map[string]map[string]RowUpdate) TableU
 }
 
 func clearConnection(c *rpc2.Client) {
-	connections[c] = nil
+	if _, ok := connections[c]; ok {
+		for _, handler := range connections[c].handlers {
+			if handler != nil {
+				handler.Disconnected(connections[c])
+			}
+		}
+	}
+	delete(connections, c)
 }
 
 func handleDisconnectNotification(c *rpc2.Client) {
