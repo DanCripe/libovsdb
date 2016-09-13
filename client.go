@@ -220,10 +220,10 @@ func (ovs OvsdbClient) Monitor(database string, jsonContext interface{}, request
 	// This totally sucks. Refer to golang JSON issue #6213
 	var response map[string]map[string]RowUpdate
 	err := ovs.rpcClient.Call("monitor", args, &response)
-	reply = getTableUpdatesFromRawUnmarshal(response)
 	if err != nil {
 		return nil, err
 	}
+	reply = getTableUpdatesFromRawUnmarshal(response)
 	return &reply, err
 }
 
