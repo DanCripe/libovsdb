@@ -21,6 +21,7 @@ type OvsMap struct {
 func (o OvsMap) MarshalJSON() ([]byte, error) {
 	var ovsMap, innerMap []interface{}
 	ovsMap = append(ovsMap, "map")
+	innerMap = []interface{}{}
 	for key, val := range o.GoMap {
 		var mapSeg []interface{}
 		mapSeg = append(mapSeg, key)
