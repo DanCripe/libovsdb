@@ -84,11 +84,11 @@ type TransactResponse struct {
 }
 
 type OperationResult struct {
-	Count   int                      `json:"count,omitempty"`
-	Error   string                   `json:"error,omitempty"`
-	Details string                   `json:"details,omitempty"`
-	UUID    UUID                     `json:"uuid,omitempty"`
-	Rows    []map[string]interface{} `json:"rows,omitempty"`
+	Count   int    `json:"count,omitempty"`
+	Error   string `json:"error,omitempty"`
+	Details string `json:"details,omitempty"`
+	UUID    UUID   `json:"uuid,omitempty"`
+	Rows    []Row  `json:"rows,omitempty"`
 }
 
 func ovsSliceToGoNotation(val interface{}) (interface{}, error) {
