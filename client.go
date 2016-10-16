@@ -246,8 +246,8 @@ func getTableUpdatesFromRawUnmarshal(raw map[string]map[string]RowUpdate) TableU
 }
 
 func clearConnection(c *rpc2.Client) {
-	connections_mutex.RLock()
-	defer connections_mutex.RUnlock()
+	connections_mutex.Lock()
+	defer connections_mutex.Unlock()
 	if _, ok := connections[c]; ok {
 		for _, handler := range connections[c].handlers {
 			if handler != nil {
